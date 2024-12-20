@@ -2,8 +2,15 @@ from textnode import *
 from htmlnode import *
 
 def main():
-    node = HTMLNode("h1", "this is the text inside", None, {"href": "https://www.google.com", "target": "_blank"})
-    print(node.props_to_html())
+    node = ParentNode("p",
+        [
+            LeafNode("b", "Bold text"),
+            LeafNode(None, "Normal text"),
+            LeafNode("i", "italic text"),
+            LeafNode(None, "Normal text"),
+        ],
+    )
+    print(node.to_html())
     
 
 
