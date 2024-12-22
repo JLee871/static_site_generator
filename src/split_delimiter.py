@@ -1,3 +1,4 @@
+import re
 from textnode import TextType, TextNode
 
 def split_nodes_delimiter(delimiter, text_type):
@@ -31,10 +32,74 @@ split_bold = split_nodes_delimiter('**', TextType.BOLD)
 split_italic = split_nodes_delimiter('*', TextType.ITALIC)
 split_code = split_nodes_delimiter('`', TextType.CODE)
 
-split_set = {split_bold, split_italic, split_code}
+splits = [split_bold, split_italic, split_code]
 
-def split_all(nodes):
+def split_all(nodes):   
     new_nodes = nodes.copy()
-    for item in split_set:
+    for item in splits:
         new_nodes = item(new_nodes)
+    return new_nodes
+
+
+def extract_markdown_images(text):
+    alt_texts_urls = re.findall(r"!\[([^\[\]]*)\]\(([^\(\)]*)\)", text)
+    return alt_texts_urls
+
+def extract_markdown_links(text):
+    anchor_texts_urls = re.findall(r"(?<!!)\[([^\[\]]*)\]\(([^\(\)]*)\)", text)
+    return anchor_texts_urls
+
+def split_nodes_image(old_nodes):
+    new_nodes = []
+    for node in old_nodes:
+        if node.text_type != TextType.NORMAL:
+            new_nodes.append(node)
+            continue
+        text = node.text
+        if text == '':
+            continue
+        matches = extract_markdown_images(text)
+        if matches == []:
+            new_nodes.append(node)
+            continue
+        text_list = []
+        for match in matches:
+            alt_text, url = match
+            text_list = text.split(f"![{alt_text}]({url})", 1)
+            if text_list[0] != '':
+                new_nodes.append(TextNode(text_list[0], TextType.NORMAL))
+            new_nodes.append(TextNode(alt_text, TextType.IMAGE, url))
+            text = text_list[1]
+        if text != '':
+            new_nodes.append(TextNode(text, TextType.NORMAL))
+    return new_nodes
+
+def split_nodes_link(old_nodes):
+    new_nodes = []
+    for node in old_nodes:
+        if node.text_type != TextType.NORMAL:
+            new_nodes.append(node)
+            continue
+        text = node.text
+        if text == '':
+            continue
+        matches = extract_markdown_links(text)
+        if matches == []:
+            new_nodes.append(node)
+            continue        
+        text_list = []
+        for match in matches:
+            alt_text, url = match
+            text_list = text.split(f"[{alt_text}]({url})", 1)
+            if text_list[0] != '':
+                new_nodes.append(TextNode(text_list[0], TextType.NORMAL))
+            new_nodes.append(TextNode(alt_text, TextType.LINKS, url))
+            text = text_list[1]
+        if text != '':
+            new_nodes.append(TextNode(text, TextType.NORMAL))
+    return new_nodes
+               
+def text_to_textnodes(text):
+    node = TextNode(text, TextType.NORMAL)
+    new_nodes = split_nodes_image(split_nodes_link(split_all([node])))
     return new_nodes
