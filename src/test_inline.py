@@ -1,9 +1,9 @@
 import unittest
 
-from split_delimiter import *
+from inline_markdown import *
 
 
-class TestSplitNodesDelimiter(unittest.TestCase):
+class TestInlineMarkdowns(unittest.TestCase):
     def test_bold(self):
         nodes = [TextNode("This is text with a **bold** word", TextType.NORMAL)]
         self.assertEqual(split_bold(nodes), [TextNode('This is text with a ', TextType.NORMAL, None), 
