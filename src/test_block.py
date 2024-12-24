@@ -69,5 +69,9 @@ This is in the same block
         block = "paragraph"
         self.assertEqual(block_to_block_type(block), block_type_paragraph)
 
+    def test_extract_title(self):
+        md = "# Hello"
+        self.assertEqual(extract_title(md), 'Hello')
+
 if __name__ == "__main__":
     unittest.main()

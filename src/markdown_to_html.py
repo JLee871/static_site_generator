@@ -17,10 +17,14 @@ def heading_to_html(block):
     return ParentNode(f'h{heading_number}', text_to_children(heading_split[1]))
 
 def code_to_html(block):
-    return ParentNode('pre', [HTMLNode('code', block[3:-3])])
+    return ParentNode('pre', [ParentNode('code', text_to_children(block[4:-3]))])
 
 def quote_to_html(block):
-    lines = block.split('>')
+    if block[0:2] == '> ':
+        lines = block.split('> ')
+    else:
+        lines = block.split('>')
+
     new_text = ''.join(lines)
     return ParentNode('blockquote', text_to_children(new_text))
 
@@ -60,5 +64,5 @@ def markdown_to_html_node(markdown):
             case 'paragraph':
                 children.append(paragraph_to_html(block))
             case _:
-                raise ValueError('invalid markdown text')
+                raise ValueError('invalid block type')
     return ParentNode('div', children)

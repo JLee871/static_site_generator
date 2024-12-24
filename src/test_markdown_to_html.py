@@ -12,8 +12,8 @@ class Test_MD_to_HTML(unittest.TestCase):
         
     def test_code_to_html(self):
         block = '```This is code```'
-        self.assertEqual(code_to_html(block), ParentNode('pre', [LeafNode('code', 'This is code')]))
-
+        self.assertEqual(code_to_html(block), ParentNode('pre', [ParentNode('code', [LeafNode(None, 'This is code')])]))
+        
     def test_quote_to_html(self):
         block = '>This is a quote block\n>This is quote block'
         self.assertEqual(quote_to_html(block), ParentNode('blockquote', [LeafNode(None, 'This is a quote block\nThis is quote block')]))

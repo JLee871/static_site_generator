@@ -1,25 +1,19 @@
-import re
-from textnode import *
-from htmlnode import *
-from inline_markdown import *
-from block_markdown import *
-from markdown_to_html import *
+import os
+from path_funcs import copy_files, generate_pages_recursive
+
+dir_path_static = "./static"
+dir_path_public = "./public"
+dir_path_content = "./content"
+template_path = "./template.html"
 
 def main():
 
-    md = """
-# This is a heading
-
-This is paragraph of text.
-
-* list item 1
-* list item 2
-* list item 3
-"""
-    list = (markdown_to_blocks(md))
-    print(markdown_to_html_node(md))
-        
-    
+    copy_files(dir_path_static, dir_path_public) 
+    generate_pages_recursive(
+        dir_path_content,
+        template_path,
+        dir_path_public
+    )
 
 if __name__ == "__main__":
     main()
