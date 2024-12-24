@@ -68,3 +68,6 @@ This is in the same block
         self.assertEqual(block_to_block_type(block), block_type_paragraph)
         block = "paragraph"
         self.assertEqual(block_to_block_type(block), block_type_paragraph)
+
+if __name__ == "__main__":
+    unittest.main()
